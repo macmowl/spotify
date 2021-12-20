@@ -23,7 +23,7 @@ This app is made with:
 To run this project, install it locally with npm by following these steps:
 
 - Select the folder then
-- ```bash
+```
 git clone https://github.com/macmowl/spotify.git
 ```
 - create a .env.local on root folder and create 3 environment variables :
@@ -33,7 +33,7 @@ git clone https://github.com/macmowl/spotify.git
     - JWT_SECRET=Name_it_like_you-want
 - Create or sign in to [Spotify Developer](https://developer.spotify.com/)
 - Create a new app and then, you be able to see the client secret and client ID used in your .env
-- ```js
+```js
 npm install
 npm run dev
 ```
