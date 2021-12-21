@@ -7,12 +7,14 @@ import useSongInfo from '../hooks/useSongInfo';
 import { SwitchHorizontalIcon, HeartIcon, VolumeUpIcon, ReplyIcon } from '@heroicons/react/outline';
 import { RewindIcon, FastForwardIcon, PauseIcon, PlayIcon } from '@heroicons/react/solid';
 import { debounce } from 'lodash';
+import TimeBar from './TimeBar';
 
 const Player = () => {
     const spotifyApi = useSpotify();
     const {data: session, status } = useSession();
     const [currentTrackId, setCurrentTrackId] = useRecoilState(currentTrackIdState);
     const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
+    const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(50);
     const songInfo = useSongInfo();
 
@@ -21,6 +23,7 @@ const Player = () => {
             spotifyApi.getMyCurrentPlayingTrack().then(data => {
                 setCurrentTrackId(data.body?.item?.id);
                 console.log("Now playing: ", data.body?.item?.id);
+                setDuration(data.body?.item?.duration_ms);
 
                 spotifyApi.getMyCurrentPlaybackState().then(data => {
                     setIsPlaying(data.body?.is_playing);
@@ -70,16 +73,21 @@ const Player = () => {
                     <p className='text-sm text-gray-500'>{songInfo?.artists?.[0]?.name}</p>
                 </div>
             </div>
-            <div className='flex justify-evenly items-center space-x-4'>
-                <SwitchHorizontalIcon className='button' />
-                <RewindIcon className='button' onClick={() => spotifyApi.skipToPrevious()}/>
-                {isPlaying ? (
-                    <PauseIcon onClick={handlePlayPause} className='button w-10 h-10' />   
-                ) : (
-                    <PlayIcon onClick={handlePlayPause} className='button w-10 h-10' />
-                )}
-                <FastForwardIcon className='button' onClick={() => spotifyApi.skipToNext()}/>
-                <ReplyIcon className='button' />
+            <div className='flex flex-col justify-evenly items-center space-x-4'>
+                <div className='flex justify-evenly items-center space-x-4'>
+                    <SwitchHorizontalIcon className='button' />
+                    <RewindIcon className='button' onClick={() => spotifyApi.skipToPrevious()}/>
+                    {isPlaying ? (
+                        <PauseIcon onClick={handlePlayPause} className='button w-10 h-10' />   
+                    ) : (
+                        <PlayIcon onClick={handlePlayPause} className='button w-10 h-10' />
+                    )}
+                    <FastForwardIcon className='button' onClick={() => spotifyApi.skipToNext()}/>
+                    <ReplyIcon className='button' />
+                </div>
+                <div>
+                    <TimeBar percent={duration/2} width={300} duration={duration} />
+                </div>
             </div>
             <div className='flex items-center space-x-3'>
                 <VolumeUpIcon className="button" onClick={() => volume > 0 && setVolume(volume - 10)}/>
